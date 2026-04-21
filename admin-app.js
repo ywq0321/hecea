@@ -165,7 +165,7 @@ function AdminApp() {
     const handleDeleteApplication = async (appId) => {
       if (!confirm('Are you sure you want to delete this application? This action cannot be undone.')) return;
       try {
-        await trickleDeleteObject('member_application', appId);
+        await window.trickleDeleteObject('member_application', appId);
         loadApplications();
         alert('Application deleted successfully');
       } catch (error) {
@@ -177,7 +177,7 @@ function AdminApp() {
     const handleDeleteMember = async (memberId) => {
       if (!confirm('Are you sure you want to delete this member? This action cannot be undone.')) return;
       try {
-        await trickleDeleteObject('member', memberId);
+        await window.trickleDeleteObject('member', memberId);
         loadMembers();
         alert('Member deleted successfully');
       } catch (error) {
