@@ -15,12 +15,12 @@ exports.handler = async function(event, context) {
     // ==========================================
     // Option 1: Hardcode them here. (It's safe because this file NEVER goes to the browser)
     const validAdmins = [
-      { username: 'admin', password: 'hecea2024' }
+      { username: 'admin', password: 'hecea2026' }
     ];
 
     // Option 2 (Better): Fetch from Netlify Environment Variables
     // (Configured in Netlify Dashboard: Site settings > Environment variables)
-    // Example: ADMIN_USER_1=admin, ADMIN_PASS_1=hecea2024
+    // Example: ADMIN_USER_1=admin, ADMIN_PASS_1=hecea2026
     
     // Validate credentials
     const validUser = validAdmins.find(
