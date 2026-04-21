@@ -30,21 +30,25 @@ function AdminApp() {
       setLoading(true);
       
       try {
-        // Fallback to original Trickle authentication
-        // Netlify Drop (drag-and-drop) does not support Serverless Functions
-        const adminList = await trickleListObjects('admin_user', 50, true);
-        const admin = adminList.items.find(item => 
-          item.objectData.username === credentials.username && 
-          item.objectData.password === credentials.password
-        );
+        // Send credentials securely to our Netlify backend
+        const response = await fetch('/.netlify/functions/admin-login', {
+          method: 'POST',
+          body: JSON.stringify({
+             username: credentials.username, 
+             password: credentials.password 
+          })
+        });
         
-        if (admin) {
-          localStorage.setItem('admin_session', JSON.stringify(admin));
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+          // Success! Save the safe user info in the browser session
+          localStorage.setItem('admin_session', JSON.stringify({ username: data.user.username, loggedIn: true }));
           setIsLoggedIn(true);
           await loadApplications();
           await loadMembers();
         } else {
-          alert('Invalid credentials');
+          alert(data.message || 'Invalid credentials');
         }
       } catch (error) {
         console.error('Login error:', error);
