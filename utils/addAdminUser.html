@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Admin User</title>
+</head>
+<body>
+    <h2>Local Admin Creator Utility</h2>
+    <p>Use this file locally on your computer to add new admins to your Trickle database. DO NOT upload this file to Netlify.</p>
+    
+    <label>Username: <input type="text" id="username"></label><br><br>
+    <label>Password: <input type="password" id="password"></label><br><br>
+    <button onclick="createAdmin()">Create Admin User</button>
+
+    <div id="status" style="margin-top: 20px; color: green;"></div>
+
+    <!-- Ensure your trickle initialization scripts are loaded properly here if they are not globally injected -->
+    <script>
+      async function createAdmin() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        if (!username || !password) {
+          alert("Please enter both username and password");
+          return;
+        }
+
+        try {
+          // Check if admin already exists
+          const adminList = await window.trickleListObjects('admin_user', 50, true);
+          const existing = adminList.items.find(item => item.objectData.username === username);
+          
+          if (existing) {
+            document.getElementById('status').innerText = "User already exists!";
+            document.getElementById('status').style.color = "red";
+            return;
+          }
+
+          const adminData = {
+            username: username,
+            password: password,
+            role: 'administrator',
+            name: 'HECEA Admin (' + username + ')',
+            email: 'ukhecea@gmail.com',
+            createdAt: new Date().toISOString()
+          };
+          
+          // Note: trickleCreateObject must be available in the window/browser
+          await window.trickleCreateObject('admin_user', adminData);
+          
+          document.getElementById('status').innerText = 'Admin user "' + username + '" created successfully!';
+          document.getElementById('status').style.color = "green";
+        } catch (error) {
+          console.error(error);
+          document.getElementById('status').innerText = 'Error creating user: ' + error.message;
+          document.getElementById('status').style.color = "red";
+        }
+      }
+    </script>
+</body>
+</html>
