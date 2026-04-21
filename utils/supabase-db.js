@@ -81,3 +81,20 @@ window.trickleUpdateObject = async function(type, objectId, data) {
   const responseData = await response.json();
   return mapFromSupabase(responseData[0]);
 };
+
+window.trickleDeleteObject = async function(type, objectId) {
+  const table = getTableName(type);
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${objectId}`, {
+    method: 'DELETE',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`
+    }
+  });
+  
+  if (!response.ok) {
+    console.error(`Supabase DELETE ${table} failed:`, await response.text());
+    throw new Error('Supabase DELETE failed');
+  }
+  return true;
+};

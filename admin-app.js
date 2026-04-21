@@ -162,6 +162,30 @@ function AdminApp() {
       }
     };
 
+    const handleDeleteApplication = async (appId) => {
+      if (!confirm('Are you sure you want to delete this application? This action cannot be undone.')) return;
+      try {
+        await trickleDeleteObject('member_application', appId);
+        loadApplications();
+        alert('Application deleted successfully');
+      } catch (error) {
+        console.error('Error deleting application:', error);
+        alert('Error deleting application');
+      }
+    };
+
+    const handleDeleteMember = async (memberId) => {
+      if (!confirm('Are you sure you want to delete this member? This action cannot be undone.')) return;
+      try {
+        await trickleDeleteObject('member', memberId);
+        loadMembers();
+        alert('Member deleted successfully');
+      } catch (error) {
+        console.error('Error deleting member:', error);
+        alert('Error deleting member');
+      }
+    };
+
     const handleLogout = () => {
       localStorage.removeItem('admin_session');
       setIsLoggedIn(false);
@@ -325,6 +349,17 @@ function AdminApp() {
                       onClick: () => handleApplicationAction(app.objectId, 'rejected'),
                       className: 'btn-danger'
                     }, 'Reject')
+                  ]) : null,
+                app.objectData.status !== 'pending' ?
+                  React.createElement('div', {
+                    key: 'actions-done',
+                    className: 'flex flex-col sm:flex-row gap-2 mt-2 pt-2 border-t'
+                  }, [
+                    React.createElement('button', {
+                      key: 'delete',
+                      onClick: () => handleDeleteApplication(app.objectId),
+                      className: 'px-4 py-2 bg-gray-500 text-white rounded-lg font-medium hover:bg-gray-600 transition-all duration-200'
+                    }, 'Delete Application')
                   ]) : null
               ])
             ))
@@ -494,10 +529,20 @@ function AdminApp() {
                       className: 'text-xs text-gray-400'
                     }, `Joined: ${member.objectData.joinDate}`)
                   ]),
-                  React.createElement('span', {
-                    key: 'type',
-                    className: 'px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm'
-                  }, member.objectData.membershipType || 'regular')
+                  React.createElement('div', {
+                    key: 'right-actions',
+                    className: 'flex flex-col items-end gap-2'
+                  }, [
+                    React.createElement('span', {
+                      key: 'type',
+                      className: 'px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm'
+                    }, member.objectData.membershipType || 'regular'),
+                    React.createElement('button', {
+                      key: 'delete',
+                      onClick: () => handleDeleteMember(member.objectId),
+                      className: 'text-sm text-red-500 hover:text-red-700 underline mt-2'
+                    }, 'Delete Member')
+                  ])
                 ])
               ])
             ))
